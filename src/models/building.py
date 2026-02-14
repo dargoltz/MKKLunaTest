@@ -3,7 +3,6 @@ from sqlalchemy import String, UUID, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .company import Company
 
 
 class Building(Base):

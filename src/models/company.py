@@ -3,8 +3,6 @@ from sqlalchemy import ARRAY, String, UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .industry import Industry
-from .building import Building
 
 
 class Company(Base):
