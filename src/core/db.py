@@ -6,6 +6,8 @@ from typing_extensions import AsyncGenerator
 from .config import config
 from .logger import logger
 
+DB_ASYNC_DRIVER = "postgresql+asyncpg://"
+
 class DatabaseManager:
     def __init__(self):
         self.engine = None
@@ -13,7 +15,7 @@ class DatabaseManager:
 
     async def add_engine(self):
         self.engine = create_async_engine(
-            url=config.DB_URL,
+            url=f"{DB_ASYNC_DRIVER}{config.DB_URL}",
             future=True,
             pool_size=20,
             max_overflow=5,
