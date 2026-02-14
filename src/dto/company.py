@@ -16,8 +16,21 @@ class CompanyPostRequest(BaseModel):
             if len(phone) != 12 or phone[0] != "+" or not phone[1:].isdigit():
                 raise ValueError("Phone number must consist of the + symbol and 11 digits.")
 
+
 class CompanyPutRequest(CompanyPostRequest):
-    pass
+    name: str | None = None
+    phone_numbers: list[str] | None = None
+    building_id: uuid.UUID | None = None
+
+    @field_validator("phone_numbers", mode="before")
+    def validate_phone_numbers(cls, v):
+        if not v:
+            raise ValueError("Phone numbers are required")
+
+        for phone in v:
+            if len(phone) != 12 or phone[0] != "+" or not phone[1:].isdigit():
+                raise ValueError("Phone number must consist of the + symbol and 11 digits.")
+
 
 class CompanyGetResponse(BaseModel):
     id: uuid.UUID
@@ -25,4 +38,3 @@ class CompanyGetResponse(BaseModel):
     industry_names: list[str]
     address: str
     phone_numbers: list[str]
-

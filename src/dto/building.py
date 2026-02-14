@@ -12,10 +12,6 @@ class BuildingPostRequest(BaseModel):
         return round(v, 6)
 
 
-class BuildingPutRequest(BuildingPostRequest):
-    pass
-
-
 class BuildingGetResponse(BaseModel):
     id: uuid.UUID
     address: str

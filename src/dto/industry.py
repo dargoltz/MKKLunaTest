@@ -9,7 +9,7 @@ class IndustryPostRequest(BaseModel):
 
 
 class IndustryPutRequest(IndustryPostRequest):
-    pass
+    name: str | None = None
 
 
 class IndustryGetResponse(BaseModel):
