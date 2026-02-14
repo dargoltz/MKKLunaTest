@@ -1,9 +1,11 @@
 import uuid
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Response
 
 from ..core import VerifiedRequest
 from ..dto import CompanyPostRequest, CompanyPutRequest, CompanyGetResponse
+from ..mappers import company_to_response
+from ..service import CompanyService
 
 router = APIRouter(prefix="/companies")
 
@@ -11,31 +13,42 @@ router = APIRouter(prefix="/companies")
 @router.post("/")
 async def create_item(
     request: CompanyPostRequest,
-    _: VerifiedRequest
+    _: VerifiedRequest,
+    service: CompanyService = Depends(),
 ) -> CompanyGetResponse:
-    ...
+    item = await service.create_item(request)
+
+    return company_to_response(item)
 
 
 @router.put("/{item_id:uuid}")
 async def update_item(
     item_id: uuid.UUID,
     request: CompanyPutRequest,
-    _: VerifiedRequest
+    _: VerifiedRequest,
+    service: CompanyService = Depends(),
 ) -> CompanyGetResponse:
-    ...
+    item = await service.update_item(item_id, request)
+
+    return company_to_response(item)
 
 
 @router.get("/{item_id:uuid}")
 async def get_item(
     item_id: uuid.UUID,
-    _: VerifiedRequest
+    _: VerifiedRequest,
+    service: CompanyService = Depends(),
 ) -> CompanyGetResponse:
-    ...
+    item = await service.get_item(item_id)
+
+    return company_to_response(item)
 
 
 @router.delete("/{item_id:uuid}")
 async def delete_item(
     item_id: uuid.UUID,
-    _: VerifiedRequest
+    _: VerifiedRequest,
+    service: CompanyService = Depends(),
 ):
-    ...
+    await service.delete_item(item_id)
+    return Response(status_code=204)
