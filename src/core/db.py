@@ -17,8 +17,6 @@ class DatabaseManager:
         self.engine = create_async_engine(
             url=f"{DB_ASYNC_DRIVER}{config.DB_URL}",
             future=True,
-            pool_size=20,
-            max_overflow=5,
         )
 
         # noinspection PyTypeChecker
@@ -42,7 +40,6 @@ class DatabaseManager:
                     yield session
                 except Exception as ex:
                     logger.error(f"DB error: {ex}")
-                    await session.rollback() # todo check maybe extra
                     raise
                 finally:
                     pass
