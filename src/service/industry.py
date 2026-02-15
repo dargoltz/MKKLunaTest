@@ -13,6 +13,16 @@ class IndustryService:
         self.session = session
 
     async def create_item(self, request: IndustryPostRequest) -> Industry:
+        """Здесь можно написать рекурсивный запрос для проверки, но я пообещал эйчару сделать приложение за 5ч и уже не успеваю"""
+        if request.parent_id:
+            parent = await self.get_item(request.parent_id)
+
+            if parent.parent_id:
+                grandparent = await self.get_item(parent.parent_id)
+
+                if grandparent.parent_id:
+                    raise HTTPException(status_code=400, detail="Industry hierarchy depth is limited to 3")
+
         item = Industry(
             name=request.name,
             parent_id=request.parent_id
