@@ -6,7 +6,3 @@ from src.routes import api_router
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(api_router)
-
-@app.get("/health")
-async  def health(_: VerifiedRequest):
-    return {"status": "ok"}
