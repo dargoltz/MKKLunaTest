@@ -35,10 +35,26 @@ class CompanyService:
     async def update_item(self, item_id: uuid.UUID, request: CompanyPutRequest) -> Company:
         item = await self.get_item(item_id)
 
-        for key, value in request.model_dump(mode="json").items():
+        for key, value in request.model_dump(mode="json", exclude_unset=True).items():
             setattr(item, key, value)
 
+        if request.industry_ids is not None:
+            for industry_id in request.industry_ids:
+                await self.session.execute(
+                    delete(company_industry).where(
+                        company_industry.c.company_id == item.id,
+                    )
+                )
+
+                await self.session.execute(
+                    insert(company_industry).values(
+                        company_id=item.id,
+                        industry_id=industry_id
+                    )
+                )
+
         await self.session.flush()
+        await self.session.refresh(item)
 
         return item
 
