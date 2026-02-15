@@ -55,3 +55,15 @@ class IndustryService:
         item = await self.get_item(item_id)
 
         await self.session.delete(item)
+
+    async def get_industry_children(self, item_id: uuid.UUID) -> list[Industry]:
+        item = await self.get_item(item_id)
+
+        result = []
+
+        for child in item.children:
+            result.append(child)
+            children = await self.get_industry_children(child.id)
+            result.extend(children)
+
+        return result
