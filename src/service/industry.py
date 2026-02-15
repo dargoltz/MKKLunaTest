@@ -2,6 +2,8 @@ import uuid
 
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from ..core import database_manager
 from ..dto import IndustryPostRequest, IndustryPutRequest
@@ -44,7 +46,11 @@ class IndustryService:
         return item
 
     async def get_item(self, item_id: uuid.UUID) -> Industry:
-        item = await self.session.get(Industry, item_id)
+        item = await self.session.execute(
+            select(Industry).where(Industry.id == item_id).options(selectinload(Industry.children))
+        )
+
+        item = item.scalars().one_or_none()
 
         if not item:
             raise HTTPException(status_code=404)
