@@ -2,13 +2,13 @@ services:
   app:
     build: .
     container_name: fastapi_app
-    command: ["/app/.venv/bin/python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
-    ports:
-      - "8000:8000"
     environment:
       - DB_URL=postgres:postgres@db:5432/mkklunatest
+      - PORT=8000
     depends_on:
       - db
+    ports:
+      - "8000:8000"
     networks:
       - app-network
 
