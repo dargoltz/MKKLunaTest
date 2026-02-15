@@ -36,3 +36,20 @@ class BuildingService:
         item = await self.get_item(item_id)
 
         await self.session.delete(item)
+
+    async def get_in_radius(self, latitude: float, longitude: float, radius: int) -> list[Building]:
+        delta_lat = radius / 111
+        delta_lon = radius / (111 * math.cos(math.radians(latitude)))
+
+        query = await self.session.execute(
+            select(Building).where(
+                and_(
+                    Building.latitude.between(latitude - delta_lat, latitude + delta_lat),
+                    Building.longitude.between(longitude - delta_lon, longitude + delta_lon)
+                )
+            ).options(selectinload(Building.companies))
+        )
+
+        items = query.scalars().all()
+
+        return list(items)
