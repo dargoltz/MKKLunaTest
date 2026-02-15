@@ -52,3 +52,46 @@ async def delete_item(
 ):
     await service.delete_item(item_id)
     return Response(status_code=204)
+
+
+@router.get("/search/{search}")
+async def get_by_name(
+    name: str,
+    _: VerifiedRequest,
+    service: CompanyService = Depends(),
+) -> CompanyGetResponse:
+    item = await service.get_by_name(name)
+    return company_to_response(item)
+
+
+@router.get("/by-coordinate")
+async def get_by_coordinate(
+    latitude: float,
+    longitude: float,
+    radius: int,
+    _: VerifiedRequest,
+    service: CompanyService = Depends(),
+) -> list[CompanyGetResponse]:
+    items = await service.get_by_coordinate(latitude, longitude, radius)
+    return [company_to_response(item) for item in items]
+
+
+@router.get("/by-building/{building_id:uuid}")
+async def get_by_building(
+    building_id: uuid.UUID,
+    _: VerifiedRequest,
+    service: CompanyService = Depends(),
+) -> list[CompanyGetResponse]:
+    items = await service.get_by_building(building_id)
+    return [company_to_response(item) for item in items]
+
+
+@router.get("/by-industry/{industry_id:uuid}")
+async def get_by_industry(
+    industry_id: uuid.UUID,
+    _: VerifiedRequest,
+    strict: bool = False,
+    service: CompanyService = Depends(),
+) -> list[CompanyGetResponse]:
+    items = await service.get_by_industry(industry_id, strict)
+    return [company_to_response(item) for item in items]
