@@ -1,7 +1,10 @@
+import math
 import uuid
 
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, and_
+from sqlalchemy.orm import selectinload
 
 from ..core import database_manager
 from ..dto import BuildingPostRequest
@@ -21,11 +24,16 @@ class BuildingService:
 
         self.session.add(item)
         await self.session.flush()
+        await self.session.refresh(item)
 
         return item
 
     async def get_item(self, item_id: uuid.UUID) -> Building:
-        item = await self.session.get(Building, item_id)
+        item = await self.session.execute(
+            select(Building).where(Building.id == item_id)
+        )
+
+        item = item.scalars().one_or_none()
 
         if not item:
             raise HTTPException(status_code=404)
