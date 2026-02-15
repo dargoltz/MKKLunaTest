@@ -22,7 +22,15 @@ class CompanyService:
         self.session.add(item)
         await self.session.flush()
 
-        return item
+        for industry_id in request.industry_ids:
+            await self.session.execute(
+                insert(company_industry).values(
+                    company_id=item.id,
+                    industry_id=industry_id
+                )
+            )
+
+        return await self.get_item(item.id)
 
     async def update_item(self, item_id: uuid.UUID, request: CompanyPutRequest) -> Company:
         item = await self.get_item(item_id)
