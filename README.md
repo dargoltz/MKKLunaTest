@@ -1,2 +1,7 @@
-# MKKLunaTest
-Test task for MKK Luna
+## Запуск:
+```
+docker compose up -d
+```
+
+## После запуска документация OpenAPI будет доступна по ссылке
+http://localhost:8000/docs
